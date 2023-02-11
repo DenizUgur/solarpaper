@@ -1,8 +1,18 @@
 # Solar Paper
 
-[![Collect Orbit Data](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml)
+[![Collect Orbit Data](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml) [![Render the Solar System](https://github.com/DenizUgur/solarpaper/actions/workflows/render.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/render.yml)
 
-Solar Paper is a project that aims to illustrate the current state of the solar system as close as possible. List of object being displayed are given below.
+Solar Paper is a project that aims to illustrate the current state of the solar system as close as possible.
+
+## Latest Render (daily)
+
+:link: Accesible at https://denizugur.dev/solarpaper/latest/solarpaper.png
+
+![Solar Paper](https://denizugur.dev/solarpaper/latest/solarpaper.png)
+
+## How it works
+
+List of objects being displayed are given below.
 
 - Sun
 - Planets
@@ -19,8 +29,6 @@ Solar Paper is a project that aims to illustrate the current state of the solar 
 - Comets
 
 > Note: **Except** for the Sun and moons, everything is displayed accurately to scale.
-
-## How it works
 
 The project is divided into two parts. The first part is the data collection. The data is collected from [NASA's JPL HORIZONS](https://ssd.jpl.nasa.gov/?horizons) and [NASA's JPL Small-Body Database](https://ssd.jpl.nasa.gov/sbdb.cgi). The collector script processes these data and generates a special file (called SSO) that contains all the data needed to draw the objects.
 
@@ -41,7 +49,7 @@ poetry run python main.py --update-db
 
 This creates a cache folder at `~/.cache/solarpaper` and generates the SSO file at `~/.cache/solarpaper/orbits.sso.gz`.
 
-To run the drawing script, you need to install [CMake](https://cmake.org/). The C++ program uses Boost, cURL, and Blend2D. You can install these libraries following the instructions on their websites. After installing the dependencies, you can run the following commands:
+To run the renderer, you need to install [CMake](https://cmake.org/). The C++ program uses Boost, cURL, and Blend2D. You can install these libraries following the instructions on their websites. After installing the dependencies, you can run the following commands:
 
 ```bash
 cd ./renderer/app
@@ -49,12 +57,13 @@ cmake --build .
 ./solarpaper.out
 ```
 
-This creates a PNG file at `./renderer/app/output-<timestamp>.png`.
+This creates a PNG file at `<SP_CACHE_PATH>/output<OUTPUT_SUFFIX>.png`. Check the table below for the environment variables.
 
-## Sample output
-
-![screenshot](./docs/sample.webp)
+| Environment Variable |      Default Value       |                                Description                                 |
+| :------------------: | :----------------------: | :------------------------------------------------------------------------: |
+|    SP_CACHE_PATH     |   ~/.cache/solarpaper    | This variable sets the location for the output image and SSO file location |
+|    OUTPUT_SUFFIX     | current time (`time(0)`) | This variable sets the suffix for the file name before the file extension  |
 
 ## License
 
-This project is licensed under the GPT-3 License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPL-3 License. See the [LICENSE](LICENSE) file for details.

@@ -1,7 +1,7 @@
 from enum import Enum
 from copy import deepcopy
 from functools import lru_cache
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 class Kind(Enum):
@@ -99,7 +99,7 @@ FILE_VALIDITY = timedelta(weeks=1)
 object_properties = {
     "default": {
         "span": timedelta(days=365),
-        "stop": datetime.now() + FILE_VALIDITY,
+        "stop": datetime.now(timezone.utc) + FILE_VALIDITY,
         "step": timedelta(days=1),
         "center": "10",
         "enabled": True,

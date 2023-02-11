@@ -7,7 +7,7 @@ import requests
 import numpy as np
 import dateutil.parser
 import concurrent.futures
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from astropy.time import Time
 from astropy import units as u
@@ -542,8 +542,8 @@ class SBDB:
         sbclass = ["ETc", "HTC", "HYP", "COM"]
         sbcdata = {
             "AND": [
-                f"tp|LT|{Horizons._dt_to_jd(datetime.now() + timedelta(days=10 * 365))}",
-                f"tp|GT|{Horizons._dt_to_jd(datetime.now() - timedelta(days=10 * 365))}",
+                f"tp|LT|{Horizons._dt_to_jd(datetime.now(timezone.utc) + timedelta(days=10 * 365))}",
+                f"tp|GT|{Horizons._dt_to_jd(datetime.now(timezone.utc) - timedelta(days=10 * 365))}",
             ]
         }
 

@@ -89,14 +89,16 @@ struct Orbit
 
 double jd_from_now(unsigned int difference)
 {
+    // Get the current UTC time
     time_t now = time(0) - difference;
-    tm *ltm = localtime(&now);
-    int year = 1900 + ltm->tm_year;
-    int month = 1 + ltm->tm_mon;
-    int day = ltm->tm_mday;
-    int hour = ltm->tm_hour;
-    int minute = ltm->tm_min;
-    int second = ltm->tm_sec;
+    tm *utm = gmtime(&now);
+
+    int year = 1900 + utm->tm_year;
+    int month = 1 + utm->tm_mon;
+    int day = utm->tm_mday;
+    int hour = utm->tm_hour;
+    int minute = utm->tm_min;
+    int second = utm->tm_sec;
 
     int a = (14 - month) / 12;
     int y = year + 4800 - a;
@@ -106,10 +108,4 @@ double jd_from_now(unsigned int difference)
     julian += fraction;
 
     return julian;
-}
-
-static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
-{
-    size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
-    return written;
 }

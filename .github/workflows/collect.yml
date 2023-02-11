@@ -28,6 +28,12 @@ jobs:
         with:
           submodules: true
 
+      - name: Setup Cache
+        uses: actions/cache@v3
+        with:
+          path: ./data
+          key: data-${{ hashFiles('./collector/*.py') }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v2
 

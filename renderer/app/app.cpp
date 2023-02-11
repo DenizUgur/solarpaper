@@ -35,6 +35,11 @@ int download_data()
     curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
 
     /* send all data to this function  */
+    auto write_data = [](void *buffer, size_t size, size_t nmemb, void *userp) -> size_t
+    {
+        return fwrite(buffer, size, nmemb, (FILE *)userp);
+    };
+
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
 
     /* open the file */
@@ -387,9 +392,17 @@ int main() // int argc, char *argv[]
     ctx.fillCircle(sun);
 
     // Initialize cache path
-    cache_path = getenv("HOME");
-    cache_path += "/.cache/solarpaper/";
-    sso_file_name = "orbits.sso.gz";
+    sso_file_name = "/orbits.sso.gz";
+    if (getenv("SP_CACHE_PATH") != NULL)
+        cache_path = getenv("SP_CACHE_PATH");
+    else
+    {
+        cache_path = getenv("HOME");
+        cache_path += "/.cache/solarpaper/";
+    }
+
+    // Get absolute path
+    cache_path = realpath(cache_path.c_str(), NULL);
 
     // Check if the cache path exists
     struct stat buf;
@@ -454,9 +467,16 @@ download_data:
     // Detach the rendering context from `img`.
     ctx.end();
 
-    // Let's use some built-in codecs provided by Blend2D.
+    // Save the image to a PNG file.
     ostringstream fn;
-    fn << "output-" << time(0) << ".png";
+    fn << cache_path << "/output";
+
+    if (getenv("OUTPUT_SUFFIX") != NULL)
+        fn << getenv("OUTPUT_SUFFIX");
+    else
+        fn << "-" << time(0);
+
+    fn << ".png";
     img.writeToFile(fn.str().c_str());
 
     return 0;
