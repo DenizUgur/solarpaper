@@ -1,0 +1,6 @@
+[submodule "renderer/asmjit"]
+	path = renderer/asmjit
+	url = https://github.com/asmjit/asmjit
+[submodule "renderer/blend2d"]
+	path = renderer/blend2d
+	url = https://github.com/blend2d/blend2d
