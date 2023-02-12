@@ -1,6 +1,6 @@
 # Solar Paper
 
-[![Collect Orbit Data](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml) [![Render the Solar System](https://github.com/DenizUgur/solarpaper/actions/workflows/render.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/render.yml)
+[![Collect Orbit Data](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/collect.yml) [![Render the Solar System](https://github.com/DenizUgur/solarpaper/actions/workflows/render.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/render.yml) [![Test](https://github.com/DenizUgur/solarpaper/actions/workflows/test.yml/badge.svg)](https://github.com/DenizUgur/solarpaper/actions/workflows/test.yml)
 
 Solar Paper is a project that aims to illustrate the current state of the solar system as close as possible.
 
@@ -36,7 +36,15 @@ The project is divided into two parts. The first part is the data collection. Th
 
 The second part is the drawing. The drawing is done using [Blend2D](https://blend2d.com/). The SSO file is read and the objects are drawn on the screen.
 
-## How to run
+## Installation
+
+This project is available via [Homebrew](https://brew.sh/). You can install it by running the following command:
+
+```bash
+brew install denizugur/tap/solarpaper
+```
+
+## Building
 
 Since the data acquisition is done over GitHub Actions, you don't need to run the collector script. However, if you want to run it, you can do so by running the following command:
 
@@ -53,8 +61,9 @@ To run the renderer, you need to install [CMake](https://cmake.org/). The C++ pr
 
 ```bash
 cd ./renderer/app
+cmake -B . -DCMAKE_BUILD_TYPE=Release
 cmake --build .
-./solarpaper.out
+./solarpaper
 ```
 
 This creates a PNG file at `<SP_CACHE_PATH>/output<OUTPUT_SUFFIX>.png`. Check the table below for the environment variables.

@@ -7,6 +7,7 @@
 #include <blend2d.h>
 #include <algorithm>
 #include <sys/stat.h>
+#include <filesystem>
 #include <curl/curl.h>
 #include <boost/iostreams/device/file.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
@@ -14,6 +15,7 @@
 
 using namespace std;
 namespace io = boost::iostreams;
+namespace fs = std::filesystem;
 
 enum Kind
 {
@@ -35,6 +37,16 @@ enum Kind
     KIND_ASTEROID = 8, // >=
 };
 
+static void read_assert(istream &in, char *buffer, int size)
+{
+    in.read(buffer, size);
+    if (in.gcount() != size)
+    {
+        cerr << "Error reading file" << endl;
+        exit(1);
+    }
+}
+
 struct Orbit
 {
     char spkid[8];
@@ -54,34 +66,34 @@ struct Orbit
 
     Orbit operator<<(istream &in)
     {
-        in.read(spkid, 8);
-        in.read(name, 32);
-        in.read((char *)&kind, 1);
+        read_assert(in, spkid, 8);
+        read_assert(in, name, 32);
+        read_assert(in, (char *)&kind, sizeof(unsigned int));
 
         if (kind > 6)
         {
-            in.read(&neo, 1);
-            in.read(&pha, 1);
+            read_assert(in, &neo, sizeof(char));
+            read_assert(in, &pha, sizeof(char));
         }
         if (kind < 6)
-            in.read((char *)&distance_ratio, 4);
+            read_assert(in, (char *)&distance_ratio, sizeof(float));
         if (kind < 7)
-            in.read(center, 8);
+            read_assert(in, center, 8);
 
-        in.read(&phy_bit, 1);
+        read_assert(in, &phy_bit, sizeof(char));
         if (phy_bit)
-            in.read((char *)&radius_ratio, 4);
+            read_assert(in, (char *)&radius_ratio, sizeof(float));
 
-        in.read((char *)&trail_duration, 4);
-        in.read((char *)&size, 4);
+        read_assert(in, (char *)&trail_duration, sizeof(unsigned int));
+        read_assert(in, (char *)&size, sizeof(unsigned int));
 
         jdtdb.resize(size);
         x.resize(size);
         y.resize(size);
 
-        in.read((char *)jdtdb.data(), size * 8);
-        in.read((char *)x.data(), size * 8);
-        in.read((char *)y.data(), size * 8);
+        read_assert(in, (char *)jdtdb.data(), size * sizeof(double));
+        read_assert(in, (char *)x.data(), size * sizeof(double));
+        read_assert(in, (char *)y.data(), size * sizeof(double));
 
         return *this;
     };
@@ -108,4 +120,10 @@ double jd_from_now(unsigned int difference)
     julian += fraction;
 
     return julian;
+}
+
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+    size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
+    return written;
 }

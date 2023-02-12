@@ -223,8 +223,8 @@ poetry.toml
 ### Other ###
 
 .vscode/
-scripts/
 error/
 *.png
+renderer/app/solarpaper
 
 # End of https://www.toptal.com/developers/gitignore/api/python,c++,cmake

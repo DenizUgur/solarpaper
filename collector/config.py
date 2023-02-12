@@ -99,7 +99,7 @@ FILE_VALIDITY = timedelta(weeks=1)
 object_properties = {
     "default": {
         "span": timedelta(days=365),
-        "stop": datetime.now(timezone.utc) + FILE_VALIDITY,
+        "stop": datetime.utcnow() + FILE_VALIDITY,
         "step": timedelta(days=1),
         "center": "10",
         "enabled": True,

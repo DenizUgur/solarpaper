@@ -1,0 +1,47 @@
+name: Test
+
+on:
+  push:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      collector: ${{ steps.filter.outputs.collector }}
+      renderer: ${{ steps.filter.outputs.renderer }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            collector:
+              - 'collector/**/*'
+            renderer:
+              - 'renderer/**/*'
+
+  collect:
+    uses: ./.github/workflows/collect.yml
+    needs: changes
+    # Check if files in collector/ have changed
+    if: needs.changes.outputs.collector == 'true'
+
+  render:
+    uses: ./.github/workflows/render.yml
+    needs: [changes, collect]
+    # Check if files in renderer/ have changed
+    if: |
+      always() &&
+      (needs.collect.result == 'success' || needs.collect.result == 'skipped') &&
+      needs.changes.outputs.renderer == 'true'
+    with:
+      test: true

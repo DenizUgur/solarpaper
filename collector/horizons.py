@@ -27,7 +27,7 @@ class OrbitElement:
     format
         spkid 8 bytes
         name 32 bytes
-        kind char
+        kind uint
         kind > 6
             neo bit
             pha bit
@@ -89,7 +89,7 @@ class OrbitElement:
         fp.write(struct.pack("32s", orbit.name.encode("utf-8")))
 
         k_i = Kind.index(kind)
-        fp.write(struct.pack("b", k_i))
+        fp.write(struct.pack("I", k_i))
 
         if k_i > 6:
             fp.write(struct.pack("c", bytes([orbit.neo])))
@@ -127,7 +127,7 @@ class OrbitElement:
         # Check if there is data
         spkid = fp.read(8).decode("utf-8").strip("\x00")
         name = fp.read(32).decode("utf-8").strip("\x00")
-        k_i = struct.unpack("b", fp.read(1))[0]
+        k_i = struct.unpack("I", fp.read(4))[0]
 
         neo = None
         pha = None
@@ -542,8 +542,8 @@ class SBDB:
         sbclass = ["ETc", "HTC", "HYP", "COM"]
         sbcdata = {
             "AND": [
-                f"tp|LT|{Horizons._dt_to_jd(datetime.now(timezone.utc) + timedelta(days=10 * 365))}",
-                f"tp|GT|{Horizons._dt_to_jd(datetime.now(timezone.utc) - timedelta(days=10 * 365))}",
+                f"tp|LT|{Horizons._dt_to_jd(datetime.utcnow() + timedelta(days=10 * 365))}",
+                f"tp|GT|{Horizons._dt_to_jd(datetime.utcnow() - timedelta(days=10 * 365))}",
             ]
         }
 

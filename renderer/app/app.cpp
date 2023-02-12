@@ -9,8 +9,8 @@ float moon_offset[2] = {30 * zoom, 50 * zoom};      // min and max, in pixels
 map<string, Orbit> major_body_orbits;
 
 string cache_path;
-string sso_file_name;
-string download_url = "https://denizugur.dev/solarpaper/orbits.sso.gz";
+string sso_file_name = "/orbits.sso.gz";
+string download_url = "https://denizugur.github.io/solarpaper/orbits.sso.gz";
 
 // Download the orbits.sso.gz data if needed
 int download_data()
@@ -34,12 +34,10 @@ int download_data()
     /* disable progress meter, set to 0L to enable it */
     curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
 
-    /* send all data to this function  */
-    auto write_data = [](void *buffer, size_t size, size_t nmemb, void *userp) -> size_t
-    {
-        return fwrite(buffer, size, nmemb, (FILE *)userp);
-    };
+    /* Follow redirections */
+    curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
 
+    /* send all data to this function  */
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
 
     /* open the file */
@@ -71,6 +69,8 @@ int download_data()
     curl_easy_cleanup(curl_handle);
 
     curl_global_cleanup();
+
+    cout << "Download complete" << endl;
 
     return 0;
 }
@@ -279,7 +279,7 @@ void draw_orbit(Orbit orbit, BLContext ctx, double jd_now)
         color = BLRgba32(0xFF1A4969);
 
     BLRgba32 color_orbit = color;
-    color_orbit.setA(orbit.kind < 6 ? 0xFF : color.a() * 0.5);
+    color_orbit.setA(orbit.kind <= KIND_MB ? 0xFF : color.a() * 0.5);
 
     BLCompOp comp_op = BL_COMP_OP_DST_OVER;
     if (orbit.kind <= KIND_MB)
@@ -392,36 +392,37 @@ int main() // int argc, char *argv[]
     ctx.fillCircle(sun);
 
     // Initialize cache path
-    sso_file_name = "/orbits.sso.gz";
+    ostringstream path;
     if (getenv("SP_CACHE_PATH") != NULL)
-        cache_path = getenv("SP_CACHE_PATH");
+        path << getenv("SP_CACHE_PATH");
     else
     {
-        cache_path = getenv("HOME");
-        cache_path += "/.cache/solarpaper/";
+        path << getenv("HOME");
+        path << "/.cache/solarpaper";
     }
 
-    // Get absolute path
-    cache_path = realpath(cache_path.c_str(), NULL);
+    // Get canonicalf path
+    fs::path relative_path = fs::path(path.str());
+    cache_path = fs::weakly_canonical(relative_path).string();
 
     // Check if the cache path exists
-    struct stat buf;
-    if (stat(cache_path.c_str(), &buf) != 0)
+    if (!fs::exists(cache_path))
     {
         // Create the cache path
-        if (mkdir(cache_path.c_str(), 0755) != 0)
+        if (!fs::create_directories(cache_path))
         {
             cerr << "Failed to create cache path" << endl;
             return 1;
         }
     }
 
+    int download_try_count = 0;
 download_data:
     // Check if the orbits file exists
-    if (stat((cache_path + sso_file_name).c_str(), &buf) != 0)
+    if (!fs::exists(cache_path + sso_file_name))
     {
         int ret = download_data();
-        if (ret != 0)
+        if (ret != 0 || download_try_count++ > 3)
             return 1;
     }
 
@@ -433,7 +434,7 @@ download_data:
     // Read the header
     double jd_valid_until;
     double jd_now = jd_from_now(0);
-    in.read((char *)&jd_valid_until, sizeof(double));
+    read_assert(in, (char *)&jd_valid_until, sizeof(double));
 
     // Check if the file is valid
     if (jd_now > jd_valid_until)
