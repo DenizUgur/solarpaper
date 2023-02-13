@@ -1,9 +1,11 @@
 #!/bin/bash
+HOMEBREW_PREFIX=$(brew --prefix)
+
 # Create the wallpaper
-/usr/local/bin/solarpaper
+$HOMEBREW_PREFIX/bin/solarpaper
 
 # Set the wallpaper
-/usr/local/bin/wallpaper set ~/.cache/solarpaper/output*.png --scale fill
+$HOMEBREW_PREFIX/bin/wallpaper set ~/.cache/solarpaper/output*.png --scale fill
 
 # Remove the old wallpaper
 sleep 1
