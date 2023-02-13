@@ -473,7 +473,7 @@ class Horizons:
 
         # Initialize
         with concurrent.futures.ThreadPoolExecutor(
-            max_workers=8 if local else 2
+            max_workers=8 if local and kind != Kind.spacecrafts else 2
         ) as executor:
             futures = []
             for s in spkid:
@@ -681,6 +681,7 @@ class Database:
         return [k for k in Kind]
 
     def update(self, kinds):
+        to_process = set(kinds)
         if not isinstance(kinds, list):
             raise Exception("kinds must be a list")
 
@@ -699,21 +700,21 @@ class Database:
                 Kind.sun_and_planets,
                 add_to_buffer,
             )
+            to_process.remove(Kind.sun_and_planets)
 
         # if any of the kinds is satellite but sun_and_planets is not in the list
-        if (
-            any([k for k in kinds if Kind.is_satellite(k)])
-            and Kind.sun_and_planets not in kinds
-        ):
+        satellites = [k for k in kinds if Kind.is_satellite(k)]
+        if any(satellites) and Kind.sun_and_planets not in kinds:
             raise Exception("You must update sun_and_planets as well")
 
-        for kind in [k for k in kinds if Kind.is_satellite(k)]:
+        for kind in satellites:
             objects = self.objects[kind]
             self.horizons.run(
                 list(objects.keys()),
                 kind,
                 add_to_buffer,
             )
+            to_process.remove(kind)
 
         # Calculate the ratios
         print("Calculating ratios...")
@@ -726,7 +727,7 @@ class Database:
         del calculated
 
         # Update the rest
-        for kind in [k for k in kinds if Kind.is_sb(k)]:
+        for kind in to_process:
             objects = self.objects[kind]
             self.horizons.run(
                 list(objects.keys()),

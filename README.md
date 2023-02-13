@@ -25,6 +25,9 @@ List of objects being displayed are given below.
   - Phobos (Mars)
   - Deimos (Mars)
 - Spacecrafts
+  - SpaceX Roadster
+  - OSIRIS-REx
+  - Parker Solar Probe
 - Asteroids
 - Comets
 

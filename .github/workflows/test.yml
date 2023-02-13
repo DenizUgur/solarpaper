@@ -41,7 +41,7 @@ jobs:
     # Check if files in renderer/ have changed
     if: |
       always() &&
-      (needs.collect.result == 'success' || needs.collect.result == 'skipped') &&
-      needs.changes.outputs.renderer == 'true'
+      (needs.collect.result == 'success' ||
+      (needs.collect.result == 'skipped' && needs.changes.outputs.renderer == 'true'))
     with:
       test: true

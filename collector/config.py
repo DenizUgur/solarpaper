@@ -102,7 +102,6 @@ object_properties = {
         "stop": datetime.utcnow() + FILE_VALIDITY,
         "step": timedelta(days=1),
         "center": "10",
-        "enabled": True,
     },
     "objects": {
         Kind.sun_and_planets: {
@@ -205,8 +204,20 @@ object_properties = {
         },
         Kind.spacecrafts: {
             "default": {
-                "span": timedelta(days=60),
-                "step": timedelta(hours=1),
+                "span": timedelta(days=45),
+                "step": timedelta(hours=6),
+                "enabled": False,
+            },
+            "individual": {
+                "-143205": {
+                    "enabled": True,
+                },
+                "-64": {
+                    "enabled": True,
+                },
+                "-96": {
+                    "enabled": True,
+                },
             },
         },
         Kind.comets: {
