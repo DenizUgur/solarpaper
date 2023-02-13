@@ -10,6 +10,15 @@ on:
 
   # Allows you to run this workflow manually from another workflow
   workflow_call:
+    inputs:
+      collect:
+        default: true
+        required: false
+        type: boolean
+      upload:
+        default: true
+        required: false
+        type: boolean
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -19,12 +28,13 @@ permissions:
 
 # Allow one concurrent deployment
 concurrency:
-  group: "pages"
+  group: ${{ (inputs.upload == true || github.event_name == 'schedule') && 'pages' || 'test'}}
   cancel-in-progress: true
 
 jobs:
   collect:
     runs-on: ubuntu-latest
+    if: ${{ inputs.collect == true || github.event_name == 'schedule' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -36,9 +46,6 @@ jobs:
         with:
           path: ./data
           key: data-${{ hashFiles('./collector/*.py') }}
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
 
       - name: Install poetry
         run: pipx install poetry
@@ -54,6 +61,27 @@ jobs:
           poetry env use "3.10"
           poetry install --no-interaction
           poetry run python main.py --update-db --cache-path ../data
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: orbits-latest
+          path: ./data
+          retention-days: 1
+
+  upload:
+    runs-on: ubuntu-latest
+    needs: collect
+    if: ${{ inputs.upload == true || github.event_name == 'schedule' }}
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: orbits-latest
+          path: ./data
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1

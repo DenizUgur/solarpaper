@@ -34,6 +34,8 @@ jobs:
     needs: changes
     # Check if files in collector/ have changed
     if: needs.changes.outputs.collector == 'true'
+    with:
+      upload: false
 
   render:
     uses: ./.github/workflows/render.yml
@@ -43,5 +45,23 @@ jobs:
       always() &&
       (needs.collect.result == 'success' ||
       (needs.collect.result == 'skipped' && needs.changes.outputs.renderer == 'true'))
+    with:
+      test: true
+      download_from_artifact: ${{ needs.collect.result == 'success' }}
+
+  upload:
+    uses: ./.github/workflows/collect.yml
+    needs: [collect, render]
+    if: |
+      always() &&
+      needs.collect.result == 'success' &&
+      needs.render.result == 'success'
+    with:
+      collect: false
+
+  render_download:
+    uses: ./.github/workflows/render.yml
+    needs: upload
+    if: ${{ needs.upload.result == 'success' }}
     with:
       test: true
