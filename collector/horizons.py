@@ -544,6 +544,7 @@ class SBDB:
             "AND": [
                 f"tp|LT|{Horizons._dt_to_jd(datetime.utcnow() + timedelta(days=10 * 365))}",
                 f"tp|GT|{Horizons._dt_to_jd(datetime.utcnow() - timedelta(days=10 * 365))}",
+                "name|DF",
             ]
         }
 
@@ -588,18 +589,10 @@ class SBDB:
                     "APO",
                     "AMO",
                 ]
-                sbcdata = {
-                    "AND": [
-                        "diameter|GE|2.0",
-                    ]
-                }
+                sbcdata = {"AND": ["name|DF"]}
             elif kwargs["aclass"] == "imb":
                 sbclass = ["IMB"]
-                sbcdata = {
-                    "AND": [
-                        "diameter|GT|0",
-                    ]
-                }
+                sbcdata = {"AND": ["diameter|DF"]}
             elif kwargs["aclass"] == "mba":
                 sbclass = ["MBA"]
                 sbcdata = {
