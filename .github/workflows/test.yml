@@ -12,7 +12,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      collector: ${{ steps.filter.outputs.collector }}
+      collector: "true"
       renderer: ${{ steps.filter.outputs.renderer }}
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
     uses: ./.github/workflows/collect.yml
     needs: changes
     # Check if files in collector/ have changed
-    if: needs.changes.outputs.collector == 'true'
+    if: ${{ needs.changes.outputs.collector == 'true' }}
     with:
       upload: false
 
@@ -51,9 +51,9 @@ jobs:
 
   upload:
     uses: ./.github/workflows/collect.yml
-    needs: [collect, render]
+    needs: [changes, collect, render]
     if: |
-      always() &&
+      always() && 
       needs.collect.result == 'success' &&
       needs.render.result == 'success'
     with:
@@ -61,7 +61,7 @@ jobs:
 
   render_download:
     uses: ./.github/workflows/render.yml
-    needs: upload
+    needs: [changes, collect, render, upload]
     if: ${{ needs.upload.result == 'success' }}
     with:
       test: true
