@@ -28,24 +28,34 @@ permissions:
 
 # Allow one concurrent deployment
 concurrency:
-  group: ${{ (inputs.upload == true || github.event_name == 'schedule') && 'pages' || 'test'}}
+  group: ${{ (inputs.upload == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'pages' || 'test'}}
   cancel-in-progress: true
 
 jobs:
   collect:
     runs-on: ubuntu-latest
-    if: ${{ inputs.collect == true || github.event_name == 'schedule' }}
+    if: ${{ inputs.collect == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           submodules: true
 
+      - name: Restore Cache
+        uses: actions/cache/restore@v3
+        with:
+          path: ./data
+          key: data-${{ hashFiles('./collector/*.py') }}
+          restore-keys: data-${{ hashFiles('./collector/*.py') }}
+
+      - name: Get a random number
+        run: echo "RANDOM_SUFFIX=${RANDOM}${RANDOM}" >> $GITHUB_ENV
+
       - name: Setup Cache
         uses: actions/cache@v3
         with:
           path: ./data
-          key: data-${{ hashFiles('./collector/*.py') }}
+          key: data-${{ hashFiles('./collector/*.py') }}-${{ env.RANDOM_SUFFIX }}
 
       - name: Install poetry
         run: pipx install poetry
@@ -74,7 +84,7 @@ jobs:
     needs: collect
     if: |
       always() &&
-      (inputs.upload == true || github.event_name == 'schedule') &&
+      (inputs.upload == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
       (needs.collect.result == 'success' || needs.collect.result == 'skipped')
     steps:
       - name: Setup Pages

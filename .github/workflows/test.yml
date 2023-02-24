@@ -12,7 +12,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      collector: "true"
+      collector: ${{ steps.filter.outputs.collector }}
       renderer: ${{ steps.filter.outputs.renderer }}
     steps:
       - name: Checkout
