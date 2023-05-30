@@ -6,9 +6,9 @@ Solar Paper is a project that aims to illustrate the current state of the solar 
 
 ## Latest Render (daily)
 
-:link: Accesible at https://denizugur.dev/solarpaper/latest/solarpaper.png
+:link: Accesible at https://denizugur.github.io/solarpaper/latest/solarpaper.png
 
-![Solar Paper](https://denizugur.dev/solarpaper/latest/solarpaper.png)
+![Solar Paper](https://denizugur.github.io/solarpaper/latest/solarpaper.png)
 
 ## How it works
 
