@@ -3,6 +3,7 @@ name = "collector"
 version = "0.1.0"
 description = "This codebase generates the orbits.sso.gz file which is used by the renderer."
 authors = ["DenizUgur <deniz343@gmail.com>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
