@@ -36,18 +36,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Setup Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./renderer
           key: renderer-${{ hashFiles('./renderer/app/*') }}
 
       - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.13
+        uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: "3.16.x"
 
@@ -63,7 +63,7 @@ jobs:
           cmake --build .
 
       - name: Restore orbits cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         if: ${{ inputs.test == false }}
         with:
           path: ./data
@@ -71,7 +71,7 @@ jobs:
           restore-keys: data-${{ hashFiles('./collector/*.py') }}
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         if: ${{ inputs.download_from_artifact == true }}
         with:
           name: orbits-latest
@@ -89,7 +89,7 @@ jobs:
         run: mv ./data/output-latest.png ./data/solarpaper.png
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: ${{ inputs.test == false }}
         with:
           name: solarpaper-latest
@@ -102,12 +102,12 @@ jobs:
     if: ${{ inputs.test == false }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Restore Cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ./data
           key: data-${{ hashFiles('./collector/*.py') }}
@@ -117,25 +117,25 @@ jobs:
         run: echo "RANDOM_SUFFIX=${RANDOM}${RANDOM}" >> $GITHUB_ENV
 
       - name: Setup Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./data
           key: data-${{ hashFiles('./collector/*.py') }}-${{ env.RANDOM_SUFFIX }}
 
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: solarpaper-latest
           path: ./data/latest
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./data
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4

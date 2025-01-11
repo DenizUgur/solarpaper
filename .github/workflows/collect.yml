@@ -37,12 +37,12 @@ jobs:
     if: ${{ inputs.collect == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Restore Cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           path: ./data
           key: data-${{ hashFiles('./collector/*.py') }}
@@ -52,7 +52,7 @@ jobs:
         run: echo "RANDOM_SUFFIX=${RANDOM}${RANDOM}" >> $GITHUB_ENV
 
       - name: Setup Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./data
           key: data-${{ hashFiles('./collector/*.py') }}-${{ env.RANDOM_SUFFIX }}
@@ -60,7 +60,7 @@ jobs:
       - name: Install poetry
         run: pipx install poetry
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
           cache: "poetry"
@@ -73,7 +73,7 @@ jobs:
           poetry run python main.py --update-db --cache-path ../data
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: orbits-latest
           path: ./data
@@ -88,19 +88,19 @@ jobs:
       (needs.collect.result == 'success' || needs.collect.result == 'skipped')
     steps:
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: orbits-latest
           path: ./data
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./data
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
