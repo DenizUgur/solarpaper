@@ -1,5 +1,5 @@
 #!/bin/bash
-HOMEBREW_PREFIX=$(brew --prefix)
+eval $(/opt/homebrew/bin/brew shellenv)
 
 # Create the wallpaper
 $HOMEBREW_PREFIX/bin/solarpaper
