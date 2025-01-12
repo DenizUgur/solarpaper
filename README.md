@@ -63,10 +63,11 @@ This creates a cache folder at `~/.cache/solarpaper` and generates the SSO file 
 To run the renderer, you need to install [CMake](https://cmake.org/). The C++ program uses Boost, cURL, and Blend2D. You can install these libraries following the instructions on their websites. After installing the dependencies, you can run the following commands:
 
 ```bash
-cd ./renderer/app
-cmake -B . -DCMAKE_BUILD_TYPE=Release
-cmake --build .
-./solarpaper
+cd ./renderer
+mkdir build
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+./build/app/solarpaper
 ```
 
 This creates a PNG file at `<SP_CACHE_PATH>/output<OUTPUT_SUFFIX>.png`. Check the table below for the environment variables.

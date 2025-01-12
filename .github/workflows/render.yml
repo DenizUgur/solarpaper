@@ -49,7 +49,7 @@ jobs:
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: "3.16.x"
+          cmake-version: "3.19.x"
 
       - name: Install dependencies
         run: |
@@ -57,10 +57,11 @@ jobs:
           sudo apt-get install -y libboost-all-dev libcurl4-openssl-dev
 
       - name: Build Renderer
-        working-directory: ./renderer/app
+        working-directory: ./renderer
         run: |
-          cmake -B . -DCMAKE_BUILD_TYPE=Release
-          cmake --build .
+          mkdir -p build
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build -j
 
       - name: Restore orbits cache
         uses: actions/cache/restore@v4
@@ -78,9 +79,9 @@ jobs:
           path: ./data
 
       - name: Generate the solar system image
-        working-directory: ./renderer/app
+        working-directory: ./renderer/build/app
         env:
-          SP_CACHE_PATH: ../../data
+          SP_CACHE_PATH: ../../../data
           OUTPUT_SUFFIX: -latest
         run: ./solarpaper
 
