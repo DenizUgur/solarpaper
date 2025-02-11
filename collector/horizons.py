@@ -297,7 +297,7 @@ class Horizons:
     def __get_support(self, **kwargs):
         params = {"www": "1", "time-span": "1", "list": kwargs["list"]}
 
-        response = requests.get(Horizons.SUPPORT_API_URL, params=params)
+        response = requests.get(Horizons.SUPPORT_API_URL, params=params, verify=False)
 
         if response.status_code != 200:
             raise Exception("Error: %s" % response.text)
@@ -391,7 +391,7 @@ class Horizons:
         if op["center"] == "999":
             return None
 
-        response = requests.get(Horizons.API_URL, params=params)
+        response = requests.get(Horizons.API_URL, params=params, verify=False)
 
         if response.status_code != 200:
             raise Exception("[%d] SPKID: %s" % (response.status_code, spkid))
@@ -559,7 +559,7 @@ class SBDB:
             **self.default_params,
         }
 
-        response = requests.get(SBDB.API_URL, params=params)
+        response = requests.get(SBDB.API_URL, params=params, verify=False)
 
         if response.status_code != 200:
             raise Exception("Error: %s" % response.text)
@@ -612,7 +612,7 @@ class SBDB:
             **self.default_params,
         }
 
-        response = requests.get(SBDB.API_URL, params=params)
+        response = requests.get(SBDB.API_URL, params=params, verify=False)
 
         if response.status_code != 200:
             raise Exception("Error: %s" % response.text)
