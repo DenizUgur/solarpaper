@@ -24,10 +24,16 @@ List of objects being displayed are given below.
   - Luna (Earth)
   - Phobos (Mars)
   - Deimos (Mars)
-- Spacecrafts
-  - SpaceX Roadster
-  - OSIRIS-REx
-  - Parker Solar Probe
+- Spacecraft
+  - Europa Clipper (2024-182A)
+  - Hayabusa 2 (2014-076K)
+  - Hera (2024-180A)
+  - JUICE (2023-053A)
+  - James Webb Space Telescope (2021-130A)
+  - Juno (2011-040A)
+  - Lucy (2021-093A)
+  - Psyche (2023-157A)
+  - Solar Orbiter (2020-010A)
 - Asteroids
 - Comets
 

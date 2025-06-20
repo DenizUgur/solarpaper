@@ -212,10 +212,31 @@ object_properties = {
                 "-143205": {
                     "enabled": True,
                 },
-                "-64": {
+                "-170": {
                     "enabled": True,
                 },
-                "-96": {
+                "-159": {
+                    "enabled": True,
+                },
+                "-144": {
+                    "enabled": True,
+                },
+                "-255": {
+                    "enabled": True,
+                },
+                "-49": {
+                    "enabled": True,
+                },
+                "-61": {
+                    "enabled": True,
+                },
+                "-28": {
+                    "enabled": True,
+                },
+                "-91": {
+                    "enabled": True,
+                },
+                "-37": {
                     "enabled": True,
                 },
             },
