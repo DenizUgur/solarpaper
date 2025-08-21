@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.30)
 project(app C CXX)
 
 # Some basics, set accordingly to your needs.
@@ -23,7 +23,7 @@ set_target_properties(app PROPERTIES OUTPUT_NAME "solarpaper")
 target_link_libraries(app blend2d)
 
 # Add Boost dependency to your application.
-find_package(Boost REQUIRED COMPONENTS system iostreams)
+find_package(Boost REQUIRED COMPONENTS iostreams)
 
 # Find Curl.
 find_package(CURL REQUIRED)
